@@ -41,12 +41,11 @@ public class Dictionary {
                     result = result + s + "\n";
                     s = scanner.nextLine();
                 }
-
                 Word tempW = new Word();
                 tempW.setWordExplain(result);
                 String Target = "";
                 int i = 1;
-                while (result.charAt(i) != ' ') {
+                while ((result.charAt(i) != ' ') || (result.charAt(i) == ' ' && result.charAt(i+1) != '/')) {
                     Target += result.charAt(i);
                     i++;
                 }
@@ -128,7 +127,6 @@ public class Dictionary {
     public static void main(String[] args) {
         Dictionary huy = new Dictionary();
         huy.insertFromFile();
-        huy.print();
     }
 }
 

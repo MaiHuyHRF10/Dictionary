@@ -1,5 +1,0 @@
-transport	giao thong
-translate	dich
-transcript	loi thoai
-trunk	canh cay
-tea	tra

@@ -4,6 +4,7 @@ import javafx.application.Platform;
 import javafx.beans.Observable;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -36,6 +37,8 @@ public class Controller implements Initializable {
 
     public Dictionary myDictionary = new Dictionary();
 
+    public ObservableList names = FXCollections.observableArrayList();
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         textSearch.setPromptText("Searching...");
@@ -57,20 +60,21 @@ public class Controller implements Initializable {
                 result.setText(wordMeaning);
             }
         });
-
     }
 
     public void initializeWordList() {
         myDictionary.insertFromFile();
-        for (int i = 0; i < 26; i++) {
+        for (int i = 0; i < 4; i++) {
             int size = myDictionary.getLibraryAt(i).getSize();
             for (int j = 0; j < size; j++) {
                 words.getItems().add(myDictionary.getWord(i, j).getWordTarget());
+                names.add(myDictionary.getWord(i, j).getWordTarget());
             }
         }
     }
 
-    /** public void addANewWord() {
+    public void addANewWord() {
+        ListView<String> newList = new ListView<String>();
         Dialog<Word> dialog = new Dialog<>();
         dialog.setTitle("Add a new word");
         dialog.setHeaderText("English");
@@ -109,9 +113,13 @@ public class Controller implements Initializable {
         });
         Optional<Word> result = dialog.showAndWait();
         result.ifPresent(newWord -> {
-            myDictionary.addWord(new Word(newWord.getWordTarget(), newWord.getWordExplain()));
+            Word add = new Word(newWord.getWordTarget(), newWord.getWordExplain());
+            myDictionary.getLibraryAt(wordTarget.getText().charAt(0) - 97).addWord(add);
         });
-        words.getItems().add(wordTarget.getText());
-    } */
+        int index = myDictionary.getLibraryAt(wordTarget.getText().charAt(0) - 97).getSize();
+        words.getItems().add(myDictionary.getWord(wordTarget.getText().charAt(0) - 97, index - 1).getWordTarget());
+        names.add(myDictionary.getWord(wordTarget.getText().charAt(0) - 97, index - 1).getWordTarget());
+        SortedList<String> sort = new SortedList(names);
+    }
 
 }

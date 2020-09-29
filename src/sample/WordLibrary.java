@@ -26,37 +26,5 @@ public class WordLibrary {
         library.add(new Word(newWord.getWordTarget(), newWord.getWordExplain()));
     }
 
-    /** public void insertFromFile() {
-        try {
-            File text = new File("C:\\Users\\DELL\\IdeaProjects\\Demo_Dictionary\\src\\sample\\wordA.txt");
-            Scanner scanner = new Scanner(text);
-
-            while (scanner.hasNextLine()) {
-                String result = "";
-                String s = scanner.nextLine();
-                while (!(s.equals(""))) {
-                    result = result + s + "\n";
-                    s = scanner.nextLine();
-                    System.out.println(result);
-                }
-
-                Word tempW = new Word();
-                tempW.setWordExplain(result);
-                String Target = "";
-                int i = 1;
-                while (result.charAt(i) != ' ') {
-                    Target += result.charAt(i);
-                    i++;
-                }
-                tempW.setWordTarget(Target);
-                library.add(tempW);
-
-            }
-
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-    } */
-
 
 }
