@@ -1,6 +1,8 @@
 package sample;
 
-public class Word {
+import java.util.Comparator;
+
+public class Word implements Comparable{
     private String wordTarget;
     private String wordExplain;
 
@@ -27,4 +29,12 @@ public class Word {
     public String getWordExplain() {
         return wordExplain;
     }
+
+
+    @Override
+    public int compareTo(Object o) {
+        Word other = (Word) o;
+        return wordTarget.compareTo(other.getWordTarget());
+    }
+
 }

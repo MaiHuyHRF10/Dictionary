@@ -52,7 +52,7 @@ public class Controller implements Initializable {
 
         this.initializeWordList();
 
-        words.setOnMouseClicked(event ->{
+        words.setOnMouseClicked(event -> {
             String wordClick = words.getSelectionModel().getSelectedItem();
             textSearch.setText(wordClick);
             if (wordClick != null && wordClick.equals("") == false) {
@@ -74,7 +74,6 @@ public class Controller implements Initializable {
     }
 
     public void addANewWord() {
-        ListView<String> newList = new ListView<String>();
         Dialog<Word> dialog = new Dialog<>();
         dialog.setTitle("Add a new word");
         dialog.setHeaderText("English");
@@ -106,7 +105,7 @@ public class Controller implements Initializable {
         dialog.getDialogPane().setContent(grid);
 
         dialog.setResultConverter(dialogButton -> {
-            if (dialogButton == addButtonType){
+            if (dialogButton == addButtonType) {
                 return new Word(wordTarget.getText(), wordExplain.getText());
             }
             return null;
@@ -114,12 +113,109 @@ public class Controller implements Initializable {
         Optional<Word> result = dialog.showAndWait();
         result.ifPresent(newWord -> {
             Word add = new Word(newWord.getWordTarget(), newWord.getWordExplain());
-            myDictionary.getLibraryAt(wordTarget.getText().charAt(0) - 97).addWord(add);
+            Word test = myDictionary.getLibraryAt(wordTarget.getText().charAt(0) - 97).addWord(add);
+            int index = myDictionary.getLibraryAt(wordTarget.getText().charAt(0) - 97).getSize();
+            //words.getItems().add(myDictionary.getWord(wordTarget.getText().charAt(0) - 97, index - 1).getWordTarget());
+            names.add(test.getWordTarget());
+            FXCollections.sort(names);
+            words.setItems(names);
+
         });
-        int index = myDictionary.getLibraryAt(wordTarget.getText().charAt(0) - 97).getSize();
-        words.getItems().add(myDictionary.getWord(wordTarget.getText().charAt(0) - 97, index - 1).getWordTarget());
-        names.add(myDictionary.getWord(wordTarget.getText().charAt(0) - 97, index - 1).getWordTarget());
-        SortedList<String> sort = new SortedList(names);
+
+    }
+
+    public void DeleteWord() {
+        Dialog<String> dialog = new Dialog<>();
+        dialog.setTitle("Delete a word");
+        dialog.setHeaderText("English");
+
+        ButtonType deleteButtonType = new ButtonType("Delete", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(deleteButtonType, ButtonType.CANCEL);
+
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(20, 150, 10, 10));
+
+        TextField wordTarget = new TextField();
+        wordTarget.setPromptText("Word target");
+
+        grid.add(new Label("Word target:"), 0, 0);
+        grid.add(wordTarget, 1, 0);
+
+        Node loginButton = dialog.getDialogPane().lookupButton(deleteButtonType);
+        loginButton.setDisable(true);
+
+        wordTarget.textProperty().addListener((observable, oldValue, newValue) -> {
+            loginButton.setDisable(newValue.trim().isEmpty());
+        });
+        dialog.getDialogPane().setContent(grid);
+
+        dialog.setResultConverter(dialogButton -> {
+            if (dialogButton == deleteButtonType) {
+                return wordTarget.getText();
+            }
+            return null;
+        });
+        Optional<String> result = dialog.showAndWait();
+        result.ifPresent(newWord -> {
+            myDictionary.getLibraryAt(newWord.charAt(0) - 97).deleteWord(newWord);
+            names.remove(newWord);
+            words.setItems(names);
+        });
+    }
+
+    public void EditWord() {
+        Dialog<Word> dialog = new Dialog<>();
+        dialog.setTitle("Edit a word");
+        dialog.setHeaderText("English");
+
+        ButtonType editButtonType = new ButtonType("Edit", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(editButtonType, ButtonType.CANCEL);
+
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(20, 150, 10, 10));
+
+        TextField wordTarget = new TextField();
+        wordTarget.setPromptText("Word target");
+        TextField wordExplain = new TextField();
+        wordExplain.setPromptText("Word explain");
+
+        grid.add(new Label("Word target:"), 0, 0);
+        grid.add(wordTarget, 1, 0);
+        grid.add(new Label("Word explain:"), 0, 1);
+        grid.add(wordExplain, 1, 1);
+
+        Node loginButton = dialog.getDialogPane().lookupButton(editButtonType);
+        loginButton.setDisable(true);
+
+        wordTarget.textProperty().addListener((observable, oldValue, newValue) -> {
+            loginButton.setDisable(newValue.trim().isEmpty());
+        });
+        dialog.getDialogPane().setContent(grid);
+
+        dialog.setResultConverter(dialogButton -> {
+            if (dialogButton == editButtonType) {
+                return new Word(wordTarget.getText(), wordExplain.getText());
+            }
+            return null;
+        });
+        Optional<Word> result = dialog.showAndWait();
+        result.ifPresent(newWord -> {
+            Word add = new Word(newWord.getWordTarget(), newWord.getWordExplain());
+            Word test = myDictionary.getLibraryAt(wordTarget.getText().charAt(0) - 97).addWord(add);
+            int index = myDictionary.getLibraryAt(wordTarget.getText().charAt(0) - 97).getSize();
+            //words.getItems().add(myDictionary.getWord(wordTarget.getText().charAt(0) - 97, index - 1).getWordTarget());
+            myDictionary.getLibraryAt(wordTarget.getText().charAt(0) - 97).editWord(newWord);
+            names.remove(newWord.getWordTarget());
+            names.add(test.getWordTarget());
+            FXCollections.sort(names);
+            words.setItems(names);
+
+        });
+
     }
 
 }

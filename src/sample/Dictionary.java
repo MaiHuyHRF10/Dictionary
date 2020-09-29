@@ -8,10 +8,12 @@ import java.util.Scanner;
 public class Dictionary {
     private WordLibrary[] arrayLibrary = new WordLibrary[26];
     private int len = 0;
-    public WordLibrary getLibraryAt (int index) {
+
+    public WordLibrary getLibraryAt(int index) {
         return arrayLibrary[index];
     }
-    public Dictionary(){
+
+    public Dictionary() {
 
     }
 
@@ -30,7 +32,7 @@ public class Dictionary {
 
     public void insertFromFile() {
         try {
-            File text = new File("C:\\Users\\DELL\\IdeaProjects\\Demo_Dictionary\\src\\sample\\wordA.txt");
+            File text = new File("C:\\Users\\Bui Loan\\IdeaProjects\\Dictionary\\src\\sample\\wordA.txt");
             Scanner scanner = new Scanner(text);
             WordLibrary test = new WordLibrary();
             while (scanner.hasNextLine()) {
@@ -45,7 +47,7 @@ public class Dictionary {
                 tempW.setWordExplain(result);
                 String Target = "";
                 int i = 1;
-                while ((result.charAt(i) != ' ') || (result.charAt(i) == ' ' && result.charAt(i+1) != '/')) {
+                while ((result.charAt(i) != ' ') || (result.charAt(i) == ' ' && result.charAt(i + 1) != '/')) {
                     Target += result.charAt(i);
                     i++;
                 }
@@ -75,41 +77,43 @@ public class Dictionary {
 
     }
 
-    /** public void delete(String searchingWord) {
-        int size = aStart.getSize();
-        int index = 0;
-        for (int i = 0; i < size; i++) {
-            if (searchingWord.equals(aStart.getWordAt(i).getWordTarget())) {
-                index = i;
-                break;
-            }
-        }
-        words.remove(index);
-        len --;
-    }
-
-
-
-
-
-    public void editWordsFromCommandLine() {
-        int size = words.size();
-        Scanner sc = new Scanner(System.in);
-        System.out.print("Edit: ");
-        String searchingTarget = sc.nextLine();
-        String searchingExplain = sc.nextLine();
-
-        for (int i = 0; i < size; i++) {
-            Word temp = this.getWordAt(i);
-            if (searchingExplain.equals(temp.getWordExplain())) {
-                temp.setWordTarget(searchingTarget);
-                break;
-            } else if (searchingTarget.equals(temp.getWordTarget())) {
-                temp.setWordExplain(searchingExplain);
-                break;
-            }
-        }
-    } */
+    /**
+     * public void delete(String searchingWord) {
+     * int size = aStart.getSize();
+     * int index = 0;
+     * for (int i = 0; i < size; i++) {
+     * if (searchingWord.equals(aStart.getWordAt(i).getWordTarget())) {
+     * index = i;
+     * break;
+     * }
+     * }
+     * words.remove(index);
+     * len --;
+     * }
+     * <p>
+     * <p>
+     * <p>
+     * <p>
+     * <p>
+     * public void editWordsFromCommandLine() {
+     * int size = words.size();
+     * Scanner sc = new Scanner(System.in);
+     * System.out.print("Edit: ");
+     * String searchingTarget = sc.nextLine();
+     * String searchingExplain = sc.nextLine();
+     * <p>
+     * for (int i = 0; i < size; i++) {
+     * Word temp = this.getWordAt(i);
+     * if (searchingExplain.equals(temp.getWordExplain())) {
+     * temp.setWordTarget(searchingTarget);
+     * break;
+     * } else if (searchingTarget.equals(temp.getWordTarget())) {
+     * temp.setWordExplain(searchingExplain);
+     * break;
+     * }
+     * }
+     * }
+     */
 
     public String dictionaryLookup(String searchingWordTarget) {
         int index = 0;
@@ -121,7 +125,12 @@ public class Dictionary {
                 break;
             }
         }
-        return this.getWord(pos, index).getWordExplain();
+        if (this.getWord(pos, index).getWordTarget().equals(searchingWordTarget)) {
+            return this.getWord(pos, index).getWordExplain();
+        } else {
+            return null;
+        }
+
     }
 
     public static void main(String[] args) {
