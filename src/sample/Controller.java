@@ -45,8 +45,15 @@ public class Controller implements Initializable {
         search.setOnAction(event -> {
             String wordSearch = textSearch.getText();
             if (wordSearch != null && wordSearch.equals("") == false) {
-                String wordMeaning = myDictionary.dictionaryLookup(wordSearch);
+                int size = myDictionary.getLibraryAt(wordSearch.charAt(0) - 97).getSize();
+                String wordMeaning = myDictionary.dictionaryLookup(wordSearch, 0,  size- 1);
                 result.setText(wordMeaning);
+                ArrayList<Word> temp = myDictionary.dictionarySearcher(wordSearch);
+                names.clear();
+                for (int i = 0; i < temp.size(); i++) {
+                    names.add(temp.get(i).getWordTarget());
+                }
+                words.setItems(names);
             }
         });
 
@@ -56,7 +63,8 @@ public class Controller implements Initializable {
             String wordClick = words.getSelectionModel().getSelectedItem();
             textSearch.setText(wordClick);
             if (wordClick != null && wordClick.equals("") == false) {
-                String wordMeaning = myDictionary.dictionaryLookup(wordClick);
+                int size = myDictionary.getLibraryAt(wordClick.charAt(0) - 97).getSize();
+                String wordMeaning = myDictionary.dictionaryLookup(wordClick, 0 , size - 1);
                 result.setText(wordMeaning);
             }
         });

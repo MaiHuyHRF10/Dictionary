@@ -115,8 +115,8 @@ public class Dictionary {
      * }
      */
 
-    public String dictionaryLookup(String searchingWordTarget) {
-        int index = 0;
+    public String dictionaryLookup(String searchingWordTarget, int begin, int end) {
+        /*int index = 0;
         int pos = searchingWordTarget.charAt(0) - 97;
         int size = arrayLibrary[pos].getSize();
         for (int i = 0; i < size; i++) {
@@ -131,6 +131,33 @@ public class Dictionary {
             return null;
         }
 
+         */
+
+        int pos = searchingWordTarget.charAt(0) - 97;
+        int index = (begin + end) / 2;
+        if (begin > end ) return null;
+        if (searchingWordTarget.equals(this.getWord(pos, index).getWordTarget())) {
+            return this.getWord(pos, index).getWordExplain();
+        } else {
+            if (searchingWordTarget.compareTo(this.getWord(pos, index).getWordTarget()) < 0) {
+                return dictionaryLookup(searchingWordTarget, begin, index- 1);
+            } else {
+                return dictionaryLookup(searchingWordTarget, index + 1, end);
+            }
+        }
+    }
+
+    public ArrayList<Word> dictionarySearcher(String select) {
+        ArrayList<Word> temp = new ArrayList<>();
+        int size = arrayLibrary[select.charAt(0) - 97].getSize();
+        for (int i = 0; i < size; i++) {
+            String s = arrayLibrary[select.charAt(0) - 97].getWordAt(i).getWordTarget();
+            if (select.length() <= s.length() && select.equals(s.substring(0, select.length()))) {
+                temp.add(arrayLibrary[select.charAt(0) - 97].getWordAt(i));
+            }
+        }
+
+        return temp;
     }
 
     public static void main(String[] args) {
