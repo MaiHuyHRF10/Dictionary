@@ -46,7 +46,7 @@ public class Controller implements Initializable {
             String wordSearch = textSearch.getText();
             if (wordSearch != null && wordSearch.equals("") == false) {
                 int size = myDictionary.getLibraryAt(wordSearch.charAt(0) - 97).getSize();
-                String wordMeaning = myDictionary.dictionaryLookup(wordSearch, 0,  size- 1);
+                String wordMeaning = myDictionary.dictionaryLookup(wordSearch);
                 result.setText(wordMeaning);
                 ArrayList<Word> temp = myDictionary.dictionarySearcher(wordSearch);
                 names.clear();
@@ -64,7 +64,7 @@ public class Controller implements Initializable {
             textSearch.setText(wordClick);
             if (wordClick != null && wordClick.equals("") == false) {
                 int size = myDictionary.getLibraryAt(wordClick.charAt(0) - 97).getSize();
-                String wordMeaning = myDictionary.dictionaryLookup(wordClick, 0 , size - 1);
+                String wordMeaning = myDictionary.dictionaryLookup(wordClick);
                 result.setText(wordMeaning);
             }
         });
@@ -72,7 +72,7 @@ public class Controller implements Initializable {
 
     public void initializeWordList() {
         myDictionary.insertFromFile();
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < 26; i++) {
             int size = myDictionary.getLibraryAt(i).getSize();
             for (int j = 0; j < size; j++) {
                 words.getItems().add(myDictionary.getWord(i, j).getWordTarget());
@@ -121,10 +121,11 @@ public class Controller implements Initializable {
         Optional<Word> result = dialog.showAndWait();
         result.ifPresent(newWord -> {
             Word add = new Word(newWord.getWordTarget(), newWord.getWordExplain());
-            Word test = myDictionary.getLibraryAt(wordTarget.getText().charAt(0) - 97).addWord(add);
+            myDictionary.getLibraryAt(wordTarget.getText().charAt(0) - 97).addWord(add);
             int index = myDictionary.getLibraryAt(wordTarget.getText().charAt(0) - 97).getSize();
             //words.getItems().add(myDictionary.getWord(wordTarget.getText().charAt(0) - 97, index - 1).getWordTarget());
-            names.add(test.getWordTarget());
+            names.add(add.getWordTarget());
+            Collections.sort(myDictionary.getLibraryAt(add.getWordTarget().charAt(0) - 97).getLibrary());
             FXCollections.sort(names);
             words.setItems(names);
 
@@ -212,16 +213,8 @@ public class Controller implements Initializable {
         });
         Optional<Word> result = dialog.showAndWait();
         result.ifPresent(newWord -> {
-            Word add = new Word(newWord.getWordTarget(), newWord.getWordExplain());
-            Word test = myDictionary.getLibraryAt(wordTarget.getText().charAt(0) - 97).addWord(add);
-            int index = myDictionary.getLibraryAt(wordTarget.getText().charAt(0) - 97).getSize();
-            //words.getItems().add(myDictionary.getWord(wordTarget.getText().charAt(0) - 97, index - 1).getWordTarget());
-            myDictionary.getLibraryAt(wordTarget.getText().charAt(0) - 97).editWord(newWord);
-            names.remove(newWord.getWordTarget());
-            names.add(test.getWordTarget());
-            FXCollections.sort(names);
-            words.setItems(names);
-
+            String temp = newWord.getWordTarget();
+            myDictionary.getLibraryAt(temp.charAt(0) - 97).editWord(newWord);
         });
 
     }

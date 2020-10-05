@@ -1,8 +1,12 @@
 package sample;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Comparator;
 
-public class Word implements Comparable{
+public class Word implements Comparable {
     private String wordTarget;
     private String wordExplain;
 
@@ -36,5 +40,5 @@ public class Word implements Comparable{
         Word other = (Word) o;
         return wordTarget.compareTo(other.getWordTarget());
     }
-
 }
+
