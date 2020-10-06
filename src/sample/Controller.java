@@ -17,6 +17,7 @@ import javafx.stage.Stage;
 import javafx.util.Pair;
 import org.w3c.dom.Text;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.*;
 
@@ -35,9 +36,14 @@ public class Controller implements Initializable {
     @FXML
     ListView<String> words;
 
+    @FXML
+    Button translate;
+
     public Dictionary myDictionary = new Dictionary();
 
     public ObservableList names = FXCollections.observableArrayList();
+
+    public Translate Google = new Translate();
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -67,6 +73,17 @@ public class Controller implements Initializable {
                 String wordMeaning = myDictionary.dictionaryLookup(wordClick);
                 result.setText(wordMeaning);
             }
+        });
+
+        translate.setOnAction(e -> {
+            String wordTarget = textSearch.getText();
+            String wordExplain = null;
+            try {
+                wordExplain = Google.translate("en", "vi", wordTarget);
+            } catch (IOException ioException) {
+                ioException.printStackTrace();
+            }
+            result.setText(wordExplain + "\n" + "Translate by Google API");
         });
     }
 
