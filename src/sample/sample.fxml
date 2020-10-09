@@ -24,7 +24,10 @@
          </rotationAxis>
       </ListView>
       <TextArea fx:id="result" layoutX="292.0" layoutY="44.0" prefHeight="346.0" prefWidth="286.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="292.0" AnchorPane.rightAnchor="22.0" AnchorPane.topAnchor="44.0" />
+<<<<<<< HEAD
       <Button fx:id="voice" layoutX="498.0" layoutY="44.0" mnemonicParsing="false" text="Voice" />
+=======
+>>>>>>> 7a9807447741fd8da269454b0585129606fc5508
       <Button fx:id="translate" layoutX="544.0" layoutY="44.0" mnemonicParsing="false" text="API" />
       <MenuBar layoutX="31.0" layoutY="31.0">
         <menus>

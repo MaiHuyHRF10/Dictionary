@@ -39,15 +39,21 @@ public class Controller implements Initializable {
     @FXML
     Button translate;
 
+<<<<<<< HEAD
     @FXML
     Button voice;
 
+=======
+>>>>>>> 7a9807447741fd8da269454b0585129606fc5508
     public Dictionary myDictionary = new Dictionary();
 
     public ObservableList names = FXCollections.observableArrayList();
 
     public Translate Google = new Translate();
+<<<<<<< HEAD
     public Voice speak = new Voice();
+=======
+>>>>>>> 7a9807447741fd8da269454b0585129606fc5508
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -91,12 +97,15 @@ public class Controller implements Initializable {
             }
             result.setText(wordExplain + "\n" + "Translate by Google API");
         });
+<<<<<<< HEAD
 
         voice.setOnAction(e -> {
             String wordTarget = textSearch.getText();
             speak.sayMultiple(wordTarget);
         });
 
+=======
+>>>>>>> 7a9807447741fd8da269454b0585129606fc5508
     }
 
     public void initializeWordList() {
