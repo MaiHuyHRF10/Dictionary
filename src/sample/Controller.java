@@ -39,11 +39,15 @@ public class Controller implements Initializable {
     @FXML
     Button translate;
 
+    @FXML
+    Button voice;
+
     public Dictionary myDictionary = new Dictionary();
 
     public ObservableList names = FXCollections.observableArrayList();
 
     public Translate Google = new Translate();
+    public Voice speak = new Voice();
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -52,7 +56,7 @@ public class Controller implements Initializable {
             String wordSearch = textSearch.getText();
             if (wordSearch != null && wordSearch.equals("") == false) {
                 int size = myDictionary.getLibraryAt(wordSearch.charAt(0) - 97).getSize();
-                String wordMeaning = myDictionary.dictionaryLookup(wordSearch);
+                String wordMeaning = myDictionary.dictionaryLookup(wordSearch, 0, size);
                 result.setText(wordMeaning);
                 ArrayList<Word> temp = myDictionary.dictionarySearcher(wordSearch);
                 names.clear();
@@ -60,6 +64,8 @@ public class Controller implements Initializable {
                     names.add(temp.get(i).getWordTarget());
                 }
                 words.setItems(names);
+            } else {
+                result.setText("No data");
             }
         });
 
@@ -70,7 +76,7 @@ public class Controller implements Initializable {
             textSearch.setText(wordClick);
             if (wordClick != null && wordClick.equals("") == false) {
                 int size = myDictionary.getLibraryAt(wordClick.charAt(0) - 97).getSize();
-                String wordMeaning = myDictionary.dictionaryLookup(wordClick);
+                String wordMeaning = myDictionary.dictionaryLookup(wordClick, 0, size);
                 result.setText(wordMeaning);
             }
         });
@@ -85,6 +91,12 @@ public class Controller implements Initializable {
             }
             result.setText(wordExplain + "\n" + "Translate by Google API");
         });
+
+        voice.setOnAction(e -> {
+            String wordTarget = textSearch.getText();
+            speak.sayMultiple(wordTarget);
+        });
+
     }
 
     public void initializeWordList() {
@@ -145,7 +157,7 @@ public class Controller implements Initializable {
             Collections.sort(myDictionary.getLibraryAt(add.getWordTarget().charAt(0) - 97).getLibrary());
             FXCollections.sort(names);
             words.setItems(names);
-
+            myDictionary.addDatabase(add);
         });
 
     }
@@ -188,6 +200,7 @@ public class Controller implements Initializable {
             myDictionary.getLibraryAt(newWord.charAt(0) - 97).deleteWord(newWord);
             names.remove(newWord);
             words.setItems(names);
+            myDictionary.deleteDatabase(newWord);
         });
     }
 
@@ -232,6 +245,7 @@ public class Controller implements Initializable {
         result.ifPresent(newWord -> {
             String temp = newWord.getWordTarget();
             myDictionary.getLibraryAt(temp.charAt(0) - 97).editWord(newWord);
+            myDictionary.editDatabase(newWord);
         });
 
     }

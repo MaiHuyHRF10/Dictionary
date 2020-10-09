@@ -7,6 +7,8 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.sql.PreparedStatement;
 import java.util.Scanner;
 
 public class Dictionary {
@@ -90,7 +92,6 @@ public class Dictionary {
             if (conn != null) {
                 System.out.println("Connect success!");
             }
-
             var sql = "select * from tbl_edict";
             var statement = conn.prepareStatement(sql);
             var resultSet = statement.executeQuery();
@@ -101,7 +102,10 @@ public class Dictionary {
     }
 
     public void showResult(ResultSet resultSet) throws SQLException {
-        WordLibrary test = new WordLibrary();
+        int check[] = new int[26];
+        for (int i = 0; i < 26; i++) {
+            check[i] = 0;
+        }
         while (resultSet.next()) {
             int idx = resultSet.getInt("idx");
             String word = resultSet.getString("word");
@@ -112,25 +116,104 @@ public class Dictionary {
                 tempW.setWordExplain(detail);
                 tempW.setWordTarget(word);
 
-                if (test.getSize() == 0) {
+                int pos = word.charAt(0) - 97;
+                if (check[pos] == 0) {
+                    WordLibrary test = new WordLibrary();
                     test.addWord(tempW);
+                    arrayLibrary[pos] = test;
+                    check[pos]++;
                 } else {
-                    if (test.getWordAt(0).getWordTarget().charAt(0) != (tempW.getWordTarget().charAt(0))) {
-                        arrayLibrary[test.getWordAt(0).getWordTarget().charAt(0) - 97] = test;
-                        test = new WordLibrary();
-                    }
-                    test.addWord(tempW);
-                    if (resultSet.isLast()) {
-                        arrayLibrary[test.getWordAt(0).getWordTarget().charAt(0) - 97] = test;
-                    }
+                    arrayLibrary[pos].addWord(tempW);
                 }
 
             }
         }
+        for (int i = 0; i < 26; i++) {
+            Collections.sort(arrayLibrary[i].getLibrary());
+        }
     }
 
-    public String dictionaryLookup(String searchingWordTarget) {
-        int index = 0;
+    public void addDatabase(Word select) {
+        String sql = "INSERT INTO tbl_edict( word, detail) VALUES ( ?, ?)";
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            String url = "jdbc:mysql://localhost:3306/dictionary2";// your db name
+            String user = "root"; // your db username
+            String password = ""; // your db password
+            Connection conn = DriverManager.getConnection(url, user, password);
+            conn.setAutoCommit(false);
+            if (conn != null) {
+                System.out.println("Connect success!");
+            }
+            //var sql = "select * from tbl_edict";
+            PreparedStatement statement = conn.prepareStatement(sql);
+            // var resultSet = statement.executeQuery();
+            if (conn != null) {
+                //statement.setInt(1, 20000);
+                statement.setString(1, select.getWordTarget());
+                statement.setString(2, select.getWordExplain());
+                int rowindex = statement.executeUpdate();
+                conn.commit();
+            }
+        } catch (ClassNotFoundException | SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void deleteDatabase(String select) {
+        String sql = "DELETE FROM tbl_edict WHERE word = ?";
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            String url = "jdbc:mysql://localhost:3306/dictionary2";// your db name
+            String user = "root"; // your db username
+            String password = ""; // your db password
+            Connection conn = DriverManager.getConnection(url, user, password);
+            conn.setAutoCommit(false);
+            if (conn != null) {
+                System.out.println("Connect success!");
+            }
+            //var sql = "select * from tbl_edict";
+            PreparedStatement statement = conn.prepareStatement(sql);
+            // var resultSet = statement.executeQuery();
+            if (conn != null) {
+                statement.setString(1, select);
+                int rowindex = statement.executeUpdate();
+                conn.commit();
+            }
+        } catch (ClassNotFoundException | SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void editDatabase(Word select) {
+        String sql = "UPDATE tbl_edict SET detail = ? WHERE word = ?";
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            String url = "jdbc:mysql://localhost:3306/dictionary2";// your db name
+            String user = "root"; // your db username
+            String password = ""; // your db password
+            Connection conn = DriverManager.getConnection(url, user, password);
+            conn.setAutoCommit(false);
+            if (conn != null) {
+                System.out.println("Connect success!");
+            }
+            //var sql = "select * from tbl_edict";
+            PreparedStatement statement = conn.prepareStatement(sql);
+            // var resultSet = statement.executeQuery();
+            if (conn != null) {
+                //statement.setInt(1, 20000);
+                statement.setString(2, select.getWordTarget());
+                statement.setString(1, select.getWordExplain());
+                int rowindex = statement.executeUpdate();
+                conn.commit();
+            }
+        } catch (ClassNotFoundException | SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public String dictionaryLookup(String searchingWordTarget, int begin, int end) {
+        /*int index = 0;
         int pos = searchingWordTarget.charAt(0) - 97;
         int size = arrayLibrary[pos].getSize();
         for (int i = 0; i < size; i++) {
@@ -145,11 +228,10 @@ public class Dictionary {
             return null;
         }
 
-         /*
-
+         */
         int pos = searchingWordTarget.charAt(0) - 97;
         int index = (begin + end) / 2;
-        if (begin > end) return null;
+        if (begin > end) return "No data";
         if (searchingWordTarget.equals(this.getWord(pos, index).getWordTarget())) {
             return this.getWord(pos, index).getWordExplain();
         } else {
@@ -160,7 +242,7 @@ public class Dictionary {
             }
         }
 
-         */
+
     }
 
     public ArrayList<Word> dictionarySearcher(String select) {
@@ -176,5 +258,11 @@ public class Dictionary {
         return temp;
     }
 
+    public static void main(String[] args) {
+        Dictionary test = new Dictionary();
+        Word a = new Word("sds", "aaaaaa");
+        //test.addDatabase(a);
+        test.editDatabase(a);
+    }
 }
 

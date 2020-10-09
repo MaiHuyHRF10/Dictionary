@@ -11,7 +11,6 @@ public class WordLibrary {
 
     private ArrayList<Word> library = new ArrayList<Word>();
 
-
     public int getSize() {
         return library.size();
     }
