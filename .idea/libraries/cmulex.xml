@@ -1,7 +1,7 @@
 <component name="libraryTable">
   <library name="cmulex">
     <CLASSES>
-      <root url="jar://E:/Downloads/cmulex.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../Voice/cmulex.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

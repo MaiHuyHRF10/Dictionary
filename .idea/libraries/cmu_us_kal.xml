@@ -1,7 +1,7 @@
 <component name="libraryTable">
   <library name="cmu_us_kal">
     <CLASSES>
-      <root url="jar://E:/Downloads/cmu_us_kal.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../Voice/cmu_us_kal.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

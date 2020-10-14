@@ -231,7 +231,11 @@ public class Dictionary {
          */
         int pos = searchingWordTarget.charAt(0) - 97;
         int index = (begin + end) / 2;
-        if (begin > end) return "No data";
+        if (begin > end) {
+            String s = this.suggest(searchingWordTarget);
+            return "<em>Can't find this word. Maybe you want to search for: </em><br/>" + s;
+        }
+
         if (searchingWordTarget.equals(this.getWord(pos, index).getWordTarget())) {
             return this.getWord(pos, index).getWordExplain();
         } else {
@@ -241,8 +245,6 @@ public class Dictionary {
                 return dictionaryLookup(searchingWordTarget, index + 1, end);
             }
         }
-
-
     }
 
     public ArrayList<Word> dictionarySearcher(String select) {
@@ -258,6 +260,76 @@ public class Dictionary {
         return temp;
     }
 
+    public String suggest(String searchingWord) {
+        String result = "";
+        final int maxSizeOfSuggestionWord = searchingWord.length() * 3 / 2;
+        ArrayList <String> suggestion = new ArrayList<>();
+        int pos = searchingWord.charAt(0) - 97;
+        int size = getLibraryAt(pos).getSize();
+
+        /** check the whole word. */
+        for (int j = 0; j < size; j++) {
+            String word = this.getWord(pos, j).getWordTarget();
+            if (word.contains(searchingWord) && word.length() <= maxSizeOfSuggestionWord)
+                if (!suggestion.contains(word))
+                    suggestion.add(word);
+            if (suggestion.size() >= 20) break;
+        }
+
+        /** check the word when having deleted a character */
+        for (int i = searchingWord.length() - 1; i >= 0; --i) {
+            StringBuffer s = new StringBuffer(searchingWord);
+            s.deleteCharAt(i);
+            for (int j = 0; j < size; j++) {
+                String word = this.getWord(pos, j).getWordTarget();
+                if (word.contains(s) && word.length() <= maxSizeOfSuggestionWord) {
+                    if (!suggestion.contains(word))
+                        suggestion.add(word);
+                    if (suggestion.size() >= 20) break;
+                }
+            }
+        }
+
+        /** Check the word when having delete 2 letter. */
+        if (suggestion.size() < 20) {
+            for (int i = 0; i < searchingWord.length() - 1; i++) {
+                for (int j = i + 1; j < searchingWord.length(); j++) {
+                    StringBuffer s = new StringBuffer(searchingWord);
+                    s.deleteCharAt(i);
+                    s.deleteCharAt(j - 1);
+                    for (int k = 0; k < size; k++) {
+                        String word = this.getWord(pos, k).getWordTarget();
+                        if (word.contains(s) && word.length() <= maxSizeOfSuggestionWord) {
+                            if (!suggestion.contains(word))
+                                suggestion.add(word);
+                            if (suggestion.size() >= 20) break;
+                        }
+                    }
+                }
+            }
+        }
+
+        /** find word with 3, 2, 1 first letters. */
+        if (suggestion.size() < 20) {
+            for (int j = 3; j >= 1; j--) {
+                String s = searchingWord.substring(0, j);
+                for (int i = 0; i < size; i++) {
+                    String word = this.getWord(pos, i).getWordTarget();
+                    if (word.contains(s) && word.length() < maxSizeOfSuggestionWord) {
+                        if (!suggestion.contains(word))
+                            suggestion.add(word);
+                        if (suggestion.size() >= 20) break;
+                    }
+                }
+            }
+        }
+
+        if (suggestion.size() == 0) suggestion.add("No data");
+
+        for (int i = 0; i < suggestion.size(); i++) result += "<li><b>" + suggestion.get(i) + "</b></li>" + "<br/>";
+        return result;
+    }
+
     public static void main(String[] args) {
         Dictionary test = new Dictionary();
         Word a = new Word("sds", "aaaaaa");
@@ -265,4 +337,3 @@ public class Dictionary {
         test.editDatabase(a);
     }
 }
-

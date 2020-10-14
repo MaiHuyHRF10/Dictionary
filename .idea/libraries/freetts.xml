@@ -1,7 +1,7 @@
 <component name="libraryTable">
   <library name="freetts">
     <CLASSES>
-      <root url="jar://E:/Downloads/freetts.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../Voice/freetts.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />
