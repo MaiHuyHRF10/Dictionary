@@ -70,7 +70,7 @@ public class Controller implements Initializable {
         search.setOnAction(event -> {
             words.scrollTo(0);
             String wordSearch = textSearch.getText().toLowerCase();
-            if (wordSearch != null && wordSearch.equals("") == false) {
+            if (wordSearch != null && wordSearch.equals("") == false && Word.check(wordSearch)) {
                 int size = myDictionary.getLibraryAt(wordSearch.charAt(0) - 97).getSize();
                 String wordMeaning = myDictionary.dictionaryLookup(wordSearch, 0, size);
 
@@ -84,7 +84,8 @@ public class Controller implements Initializable {
                 }
                 words.setItems(names);
             } else {
-                result.setText("No data");
+                //result.setText("No data");
+                engine.loadContent("This word is not correct!");
             }
         });
 
@@ -96,7 +97,7 @@ public class Controller implements Initializable {
                 if (keyEvent.getCode() == KeyCode.ENTER) {
                     words.scrollTo(0);
                     String wordSearch = textSearch.getText().toLowerCase();
-                    if (wordSearch != null && wordSearch.equals("") == false) {
+                    if (wordSearch != null && wordSearch.equals("") == false && Word.check(wordSearch)) {
                         int size = myDictionary.getLibraryAt(wordSearch.charAt(0) - 97).getSize();
                         String wordMeaning = myDictionary.dictionaryLookup(wordSearch, 0, size);
 
@@ -110,7 +111,8 @@ public class Controller implements Initializable {
                         }
                         words.setItems(names);
                     } else {
-                        result.setText("No data");
+                        //result.setText("No data");
+                        engine.loadContent("This word is not correct!");
                     }
                 }
             }
@@ -184,9 +186,10 @@ public class Controller implements Initializable {
         Node loginButton = dialog.getDialogPane().lookupButton(addButtonType);
         loginButton.setDisable(true);
 
-        wordTarget.textProperty().addListener((observable, oldValue, newValue) -> {
+        wordExplain.textProperty().addListener((observable, oldValue, newValue) -> {
             loginButton.setDisable(newValue.trim().isEmpty());
         });
+        
         dialog.getDialogPane().setContent(grid);
 
         dialog.setResultConverter(dialogButton -> {
@@ -197,12 +200,13 @@ public class Controller implements Initializable {
         });
         Optional<Word> result = dialog.showAndWait();
         result.ifPresent(newWord -> {
+            newWord.setWordTarget(newWord.getWordTarget().toLowerCase());
             WordLibrary currentLibrary = myDictionary.getLibraryAt(newWord.getWordTarget().charAt(0) - 97);
             String newWordExplain = myDictionary.dictionaryLookup(newWord.getWordTarget(), 0, currentLibrary.getSize());
             if (newWordExplain.charAt(1) == 'e') {
                 Word add = new Word(newWord.getWordTarget(), newWord.getWordExplain());
-                myDictionary.getLibraryAt(wordTarget.getText().charAt(0) - 97).addWord(add);
-                int index = myDictionary.getLibraryAt(wordTarget.getText().charAt(0) - 97).getSize();
+                myDictionary.getLibraryAt(newWord.getWordTarget().charAt(0) - 97).addWord(add);
+                int index = myDictionary.getLibraryAt(newWord.getWordTarget().charAt(0) - 97).getSize();
                 //words.getItems().add(myDictionary.getWord(wordTarget.getText().charAt(0) - 97, index - 1).getWordTarget());
                 names.add(add.getWordTarget());
                 Collections.sort(myDictionary.getLibraryAt(add.getWordTarget().charAt(0) - 97).getLibrary());
@@ -215,8 +219,9 @@ public class Controller implements Initializable {
                 alert1.setTitle("Add word");
                 alert1.setHeaderText("Notification");
                 alert1.setContentText("You've already added a new word: " +
-                        wordTarget.getText() + "\n with the explanation: " + wordExplain.getText());
+                        wordTarget.getText().toLowerCase() + "\n with the explanation: " + wordExplain.getText());
                 alert1.show();
+                this.print();
             } else {
                 Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
                 alert.setTitle("Confirmation");
@@ -273,6 +278,7 @@ public class Controller implements Initializable {
         });
         Optional<String> result = dialog.showAndWait();
         result.ifPresent(newWord -> {
+            newWord = newWord.toLowerCase();
             WordLibrary currentLibrary = myDictionary.getLibraryAt(newWord.charAt(0) - 97);
             String newWordExplain = myDictionary.dictionaryLookup(newWord, 0, currentLibrary.getSize());
             // check if the word exists.
@@ -287,6 +293,7 @@ public class Controller implements Initializable {
                 alert1.setHeaderText("Notification");
                 alert1.setContentText("You've already deleted the word: " + newWord);
                 alert1.show();
+                this.print();
             } else {
                 Alert alert1 = new Alert(Alert.AlertType.INFORMATION);
                 alert1.setTitle("Delete word");
@@ -337,6 +344,7 @@ public class Controller implements Initializable {
         });
         Optional<Word> result = dialog.showAndWait();
         result.ifPresent(newWord -> {
+            newWord.setWordTarget(newWord.getWordTarget().toLowerCase());
             WordLibrary currentLibrary = myDictionary.getLibraryAt(newWord.getWordTarget().charAt(0) - 97);
             String newWordExplain = myDictionary.dictionaryLookup(newWord.getWordTarget(), 0, currentLibrary.getSize());
             if (newWordExplain.charAt(1) != 'e') {
@@ -350,6 +358,7 @@ public class Controller implements Initializable {
                 alert1.setContentText("You've already added a new word: " +
                         wordTarget.getText() + "\n with the explanation: " + wordExplain.getText());
                 alert1.show();
+                this.print();
             } else {
                 Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
                 alert.setTitle("Confirmation");
@@ -451,8 +460,19 @@ public class Controller implements Initializable {
         alert1.show();
     }
 
-    public  void Action (ActionEvent event){
+    public void Action (ActionEvent event){
         Platform.exit();
         System.exit(0);
+    }
+
+    public void print() {
+        names.clear();
+        for (int i = 0; i < 26; i++) {
+            int size = myDictionary.getLibraryAt(i).getSize();
+            for (int j = 0; j < size; j++) {
+                names.add(myDictionary.getWord(i, j).getWordTarget());
+            }
+        }
+        words.setItems(names);
     }
 }
