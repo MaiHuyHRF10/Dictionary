@@ -140,7 +140,8 @@ public class Controller implements Initializable {
                 ioException.printStackTrace();
             }
             //result.setText(wordExplain + "\n" + "Translate by Google API");
-            engine.loadContent(wordExplain+"<br/>Translate by Google API");
+            if (wordExplain == null) wordExplain = "You haven't connected to the Internet yet!";
+            engine.loadContent(wordExplain + "<br/>Translate by Google API");
         });
 
         voice.setOnAction(e -> {
@@ -189,7 +190,7 @@ public class Controller implements Initializable {
         wordExplain.textProperty().addListener((observable, oldValue, newValue) -> {
             loginButton.setDisable(newValue.trim().isEmpty());
         });
-        
+
         dialog.getDialogPane().setContent(grid);
 
         dialog.setResultConverter(dialogButton -> {
@@ -200,46 +201,54 @@ public class Controller implements Initializable {
         });
         Optional<Word> result = dialog.showAndWait();
         result.ifPresent(newWord -> {
-            newWord.setWordTarget(newWord.getWordTarget().toLowerCase());
-            WordLibrary currentLibrary = myDictionary.getLibraryAt(newWord.getWordTarget().charAt(0) - 97);
-            String newWordExplain = myDictionary.dictionaryLookup(newWord.getWordTarget(), 0, currentLibrary.getSize());
-            if (newWordExplain.charAt(1) == 'e') {
-                Word add = new Word(newWord.getWordTarget(), newWord.getWordExplain());
-                myDictionary.getLibraryAt(newWord.getWordTarget().charAt(0) - 97).addWord(add);
-                int index = myDictionary.getLibraryAt(newWord.getWordTarget().charAt(0) - 97).getSize();
-                //words.getItems().add(myDictionary.getWord(wordTarget.getText().charAt(0) - 97, index - 1).getWordTarget());
-                names.add(add.getWordTarget());
-                Collections.sort(myDictionary.getLibraryAt(add.getWordTarget().charAt(0) - 97).getLibrary());
-                FXCollections.sort(names);
-                words.setItems(names);
-                myDictionary.addDatabase(add);
+            if (Word.check(newWord.getWordTarget())) {
+                newWord.setWordTarget(newWord.getWordTarget().toLowerCase());
+                WordLibrary currentLibrary = myDictionary.getLibraryAt(newWord.getWordTarget().charAt(0) - 97);
+                String newWordExplain = myDictionary.dictionaryLookup(newWord.getWordTarget(), 0, currentLibrary.getSize());
+                if (newWordExplain.charAt(1) == 'e') {
+                    Word add = new Word(newWord.getWordTarget(), newWord.getWordExplain());
+                    myDictionary.getLibraryAt(newWord.getWordTarget().charAt(0) - 97).addWord(add);
+                    int index = myDictionary.getLibraryAt(newWord.getWordTarget().charAt(0) - 97).getSize();
+                    //words.getItems().add(myDictionary.getWord(wordTarget.getText().charAt(0) - 97, index - 1).getWordTarget());
+                    names.add(add.getWordTarget());
+                    Collections.sort(myDictionary.getLibraryAt(add.getWordTarget().charAt(0) - 97).getLibrary());
+                    FXCollections.sort(names);
+                    words.setItems(names);
+                    myDictionary.addDatabase(add);
 
 
-                Alert alert1 = new Alert(Alert.AlertType.INFORMATION);
-                alert1.setTitle("Add word");
-                alert1.setHeaderText("Notification");
-                alert1.setContentText("You've already added a new word: " +
-                        wordTarget.getText().toLowerCase() + "\n with the explanation: " + wordExplain.getText());
-                alert1.show();
-                this.print();
-            } else {
-                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-                alert.setTitle("Confirmation");
-                alert.setHeaderText("This word have already existed in the dictionary");
-                alert.setContentText("Do you want to edit?");
+                    Alert alert1 = new Alert(Alert.AlertType.INFORMATION);
+                    alert1.setTitle("Add word");
+                    alert1.setHeaderText("Notification");
+                    alert1.setContentText("You've already added a new word: " +
+                            wordTarget.getText().toLowerCase() + "\n with the explanation: " + wordExplain.getText());
+                    alert1.show();
+                    this.print();
+                } else {
+                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                    alert.setTitle("Confirmation");
+                    alert.setHeaderText("This word have already existed in the dictionary");
+                    alert.setContentText("Do you want to edit?");
 
-                ButtonType buttonTypeYes = new ButtonType("Yes", ButtonBar.ButtonData.YES);
-                ButtonType buttonTypeNo = new ButtonType("No", ButtonBar.ButtonData.NO);
-                ButtonType buttonTypeCancel = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+                    ButtonType buttonTypeYes = new ButtonType("Yes", ButtonBar.ButtonData.YES);
+                    ButtonType buttonTypeNo = new ButtonType("No", ButtonBar.ButtonData.NO);
+                    ButtonType buttonTypeCancel = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
 
-                alert.getButtonTypes().setAll(buttonTypeYes, buttonTypeNo, buttonTypeCancel);
+                    alert.getButtonTypes().setAll(buttonTypeYes, buttonTypeNo, buttonTypeCancel);
 
-                Optional<ButtonType> result1 = alert.showAndWait();
+                    Optional<ButtonType> result1 = alert.showAndWait();
 
-                if (result1.get() == buttonTypeYes) {
-                    this.EditWord();
+                    if (result1.get() == buttonTypeYes) {
+                        this.EditWord();
+                    }
                 }
+            } else {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Information");
+                alert.setHeaderText("This word is not correct!");
+                alert.show();
             }
+
         });
     }
 
@@ -283,17 +292,31 @@ public class Controller implements Initializable {
             String newWordExplain = myDictionary.dictionaryLookup(newWord, 0, currentLibrary.getSize());
             // check if the word exists.
             if (newWordExplain.charAt(1) != 'e') {
-                currentLibrary.deleteWord(newWord);
-                names.remove(newWord);
-                words.setItems(names);
-                myDictionary.deleteDatabase(newWord);
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.setTitle("Confirmation");
+                alert.setHeaderText("Deletion Confirmation");
+                alert.setHeaderText("Are you sure to delete this word permanently?");
 
-                Alert alert1 = new Alert(Alert.AlertType.INFORMATION);
-                alert1.setTitle("Delete word");
-                alert1.setHeaderText("Notification");
-                alert1.setContentText("You've already deleted the word: " + newWord);
-                alert1.show();
-                this.print();
+                ButtonType buttonTypeYes = new ButtonType("Yes", ButtonBar.ButtonData.YES);
+                ButtonType buttonTypeNo = new ButtonType("No", ButtonBar.ButtonData.NO);
+                ButtonType buttonTypeCancel = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+
+                alert.getButtonTypes().setAll(buttonTypeYes, buttonTypeNo, buttonTypeCancel);
+
+                Optional<ButtonType> result1 = alert.showAndWait();
+                if (result1.get() == buttonTypeYes) {
+                    currentLibrary.deleteWord(newWord);
+                    names.remove(newWord);
+                    words.setItems(names);
+                    myDictionary.deleteDatabase(newWord);
+
+                    Alert alert1 = new Alert(Alert.AlertType.INFORMATION);
+                    alert1.setTitle("Delete word");
+                    alert1.setHeaderText("Notification");
+                    alert1.setContentText("You've already deleted the word: " + newWord);
+                    alert1.show();
+                    this.print();
+                }
             } else {
                 Alert alert1 = new Alert(Alert.AlertType.INFORMATION);
                 alert1.setTitle("Delete word");
@@ -331,7 +354,7 @@ public class Controller implements Initializable {
         Node loginButton = dialog.getDialogPane().lookupButton(editButtonType);
         loginButton.setDisable(true);
 
-        wordTarget.textProperty().addListener((observable, oldValue, newValue) -> {
+        wordExplain.textProperty().addListener((observable, oldValue, newValue) -> {
             loginButton.setDisable(newValue.trim().isEmpty());
         });
         dialog.getDialogPane().setContent(grid);
@@ -460,7 +483,7 @@ public class Controller implements Initializable {
         alert1.show();
     }
 
-    public void Action (ActionEvent event){
+    public void Action(ActionEvent event) {
         Platform.exit();
         System.exit(0);
     }

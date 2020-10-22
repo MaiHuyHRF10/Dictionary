@@ -325,15 +325,7 @@ public class Dictionary {
         }
 
         if (suggestion.size() == 0) suggestion.add("No data");
-
         for (int i = 0; i < suggestion.size(); i++) result += "<li><b>" + suggestion.get(i) + "</b></li>" + "<br/>";
         return result;
-    }
-
-    public static void main(String[] args) {
-        Dictionary test = new Dictionary();
-        Word a = new Word("sds", "aaaaaa");
-        //test.addDatabase(a);
-        test.editDatabase(a);
     }
 }
