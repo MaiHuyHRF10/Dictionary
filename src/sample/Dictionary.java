@@ -38,51 +38,6 @@ public class Dictionary {
     }
 
     public void insertFromFile() {
-        /*try {
-            File text = new File("C:\\Users\\Bui Loan\\IdeaProjects\\Dictionary\\src\\sample\\wordA.txt");
-            Scanner scanner = new Scanner(text);
-            WordLibrary test = new WordLibrary();
-            while (scanner.hasNextLine()) {
-                String result = "";
-
-                String s = scanner.nextLine();
-                while (!(s.equals(""))) {
-                    result = result + s + "\n";
-                    s = scanner.nextLine();
-                }
-                Word tempW = new Word();
-                tempW.setWordExplain(result);
-                String Target = "";
-                int i = 1;
-                while ((result.charAt(i) != ' ') || (result.charAt(i) == ' ' && result.charAt(i + 1) != '/')) {
-                    Target += result.charAt(i);
-                    i++;
-                }
-                tempW.setWordTarget(Target);
-                if (test.getSize() == 0) {
-                    test.addWord(tempW);
-                } else {
-                    if (test.getWordAt(0).getWordTarget().charAt(0) == (tempW.getWordTarget().charAt(0))) {
-                        test.addWord(tempW);
-                        if (!scanner.hasNextLine()) {
-                            arrayLibrary[test.getWordAt(0).getWordTarget().charAt(0) - 97] = test;
-                        }
-                    } else {
-                        arrayLibrary[test.getWordAt(0).getWordTarget().charAt(0) - 97] = test;
-                        test = new WordLibrary();
-                        test.addWord(tempW);
-                        if (!scanner.hasNextLine()) {
-                            arrayLibrary[test.getWordAt(0).getWordTarget().charAt(0) - 97] = test;
-                        }
-                    }
-                }
-            }
-
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-
-         */
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
             String url = "jdbc:mysql://localhost:3306/dictionary2";// your db name
@@ -213,22 +168,6 @@ public class Dictionary {
     }
 
     public String dictionaryLookup(String searchingWordTarget, int begin, int end) {
-        /*int index = 0;
-        int pos = searchingWordTarget.charAt(0) - 97;
-        int size = arrayLibrary[pos].getSize();
-        for (int i = 0; i < size; i++) {
-            if (searchingWordTarget.equals(this.getWord(pos, i).getWordTarget())) {
-                index = i;
-                break;
-            }
-        }
-        if (this.getWord(pos, index).getWordTarget().equals(searchingWordTarget)) {
-            return this.getWord(pos, index).getWordExplain();
-        } else {
-            return null;
-        }
-
-         */
         int pos = searchingWordTarget.charAt(0) - 97;
         int index = (begin + end) / 2;
         if (begin > end) {

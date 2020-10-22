@@ -85,7 +85,7 @@ public class Controller implements Initializable {
                 words.setItems(names);
             } else {
                 //result.setText("No data");
-                engine.loadContent("This word is not correct!");
+                engine.loadContent("<em>This word is not correct!</em>");
             }
         });
 
@@ -374,12 +374,11 @@ public class Controller implements Initializable {
                 String temp = newWord.getWordTarget();
                 myDictionary.getLibraryAt(temp.charAt(0) - 97).editWord(newWord);
                 myDictionary.editDatabase(newWord);
-
                 Alert alert1 = new Alert(Alert.AlertType.INFORMATION);
-                alert1.setTitle("Add word");
+                alert1.setTitle("Edit word");
                 alert1.setHeaderText("Notification");
-                alert1.setContentText("You've already added a new word: " +
-                        wordTarget.getText() + "\n with the explanation: " + wordExplain.getText());
+                alert1.setContentText("You've already changed the explain of word: "
+                        + wordTarget.getText() + " to " + wordExplain.getText());
                 alert1.show();
                 this.print();
             } else {
@@ -401,13 +400,6 @@ public class Controller implements Initializable {
                 }
             }
         });
-
-        Alert alert1 = new Alert(Alert.AlertType.INFORMATION);
-        alert1.setTitle("Edit word");
-        alert1.setHeaderText("Notification");
-        alert1.setContentText("You've already changed the explain of word: "
-                + wordTarget.getText() + " to " + wordExplain.getText());
-        alert1.show();
     }
 
     public void DeleteWordRightMouse() {
@@ -436,6 +428,7 @@ public class Controller implements Initializable {
             alert1.setHeaderText("Notification");
             alert1.setContentText("You've already delete the word: " + wordClick);
             alert1.show();
+            this.print();
         }
     }
 
@@ -474,6 +467,7 @@ public class Controller implements Initializable {
             String temp = newWord.getWordTarget();
             myDictionary.getLibraryAt(temp.charAt(0) - 97).editWord(newWord);
             myDictionary.editDatabase(newWord);
+            engine.load(newWord.getWordExplain());
         });
 
         Alert alert1 = new Alert(Alert.AlertType.INFORMATION);
